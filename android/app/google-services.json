@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "984797892872",
+    "project_id": "chat-near-by",
+    "storage_bucket": "chat-near-by.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984797892872:android:9123f30cbf29a8da251cbd",
+        "android_client_info": {
+          "package_name": "com.example.chat_near_by"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "984797892872-et10dd338snfdqmqg2jq9bo7hpru7q1c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh2Fih0yPME_TD7Ld4wttH7miBbCx0c1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "984797892872-et10dd338snfdqmqg2jq9bo7hpru7q1c.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "984797892872-4gh80vfjp869urprtq67srnu8036gp31.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.chatModule"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
