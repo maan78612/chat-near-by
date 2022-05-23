@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:chat_module/ModelClasses/userData.dart';
+import 'package:chat_module/UI/Shared/image_media.dart';
 import 'package:chat_module/utilities/firestorage_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -127,7 +128,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  pressEdit(GlobalKey<FormState> formKey) {
+  pressSave(GlobalKey<FormState> formKey) {
     if (formKey.currentState!.validate()) {
       updateUserInDB(userImage);
       notifyListeners();
@@ -174,12 +175,19 @@ class AuthProvider extends ChangeNotifier {
 
   ChatProvider p = Provider.of<ChatProvider>(Get.context!, listen: false);
 
-  Future getImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+  Future getImageFunc() async {
+
+    File? pickedFile =
+    await Get.bottomSheet(ImageOptionSheet());
     if (pickedFile != null) {
       userImage = File(pickedFile.path);
+    } else {
+      if (kDebugMode) {
+        print("not added");
+      }
     }
+
+
 
     notifyListeners();
   }
@@ -268,8 +276,9 @@ class AuthProvider extends ChangeNotifier {
 
   void updateUserInDB(File ? imageFile) async {
     imageUrlToSet = "";
+    startLoader();
     if (imageFile != null) {
-      startLoader();
+
       imageUrlToSet = await fStorage.uploadSingleFile(
           bucketName: "Profile Images",
           file: imageFile,
@@ -278,7 +287,7 @@ class AuthProvider extends ChangeNotifier {
       imageUrlToSet = appUserData.imageUrl;
     }
 
-    startLoader();
+
 
     FBCollections.users
         .doc(emailController.text)

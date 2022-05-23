@@ -11,6 +11,7 @@ import 'package:chat_module/constants/app_constants.dart';
 import 'package:chat_module/constants/firebase_collections.dart';
 import 'package:chat_module/utilities/dimension.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -210,7 +211,7 @@ class ConversationState extends State<Conversation> {
             child: const Padding(
               padding: EdgeInsets.all(4.0),
               child: Icon(
-                Icons.add_comment,
+                Icons.camera_alt,
                 color: Colors.black,
               ),
             ),
@@ -229,20 +230,20 @@ class ConversationState extends State<Conversation> {
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _imgFromGallery(p);
-              });
-            },
-            child: const Padding(
-              padding: EdgeInsets.all(4.0),
-              child: Icon(
-                Icons.attach_file_sharp,
-                color: Colors.black,
-              ),
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: () {
+          //     setState(() {
+          //       _fileFromPhone(p);
+          //     });
+          //   },
+          //   child: const Padding(
+          //     padding: EdgeInsets.all(4.0),
+          //     child: Icon(
+          //       Icons.attach_file_sharp,
+          //       color: Colors.black,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -335,10 +336,7 @@ class ConversationState extends State<Conversation> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: userAvatar(imageUrl: userData?.imageUrl),
-                ),
+                userAvatar(imageUrl: userData?.imageUrl),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -443,13 +441,7 @@ class ConversationState extends State<Conversation> {
                     ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.network(msg.fileUrl)),
-                    // Padding(
-                    //   padding: EdgeInsets.fromLTRB(0, 6, 0, 0),
-                    //   child: Text(
-                    //     msg.msg ?? "",
-                    //     textAlign: TextAlign.left,
-                    //   ),
-                    // ),
+
                   ],
                 ),
               ),
@@ -466,11 +458,16 @@ class ConversationState extends State<Conversation> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CircleAvatar(
-          backgroundImage: NetworkImage(
-            /* imageUrl == null || imageUrl.isEmpty ? "" : */
-            imageUrl!,
-          ),
-          radius: Get.width * 0.05,
+          backgroundImage: (imageUrl??"" )== ""
+              ? AssetImage(
+            AppConfig.images.addImgIcon,
+          )
+              : NetworkImage(imageUrl!) as ImageProvider,
+
+
+          maxRadius: Dimensions.radiusLarge,
+          backgroundColor: Colors.transparent,
+
         ),
         SizedBox(width: Get.width * 0.04),
       ],
@@ -502,21 +499,34 @@ class ConversationState extends State<Conversation> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       image = File(pickedFile.path);
-      sendImage(image, p);
+      sendFile(image, p);
     }
   }
 
+  // _fileFromPhone(ChatProvider p) async {
+  //   PlatformFile? pickedFile;
+  //
+  //   final result=await FilePicker.platform.pickFiles();
+  //   if(result!=null){
+  //     pickedFile=result.files.first;
+  //     final file=File(pickedFile.path!);
+  //     sendFile(file, p);
+  //   } else {
+  //     return;
+  //   }
+  //
+  // }
   _imgFromCamera(ChatProvider p) async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       image = File(pickedFile.path);
-      sendImage(image, p);
+      sendFile(image, p);
     }
   }
 
   //send Media Message
-  void sendImage(File image, ChatProvider p) async {
-    String url = await p.uploadFile(image);
+  void sendFile(File chatFile, ChatProvider p) async {
+    String url = await p.uploadFile(chatFile);
     Message msg = Message(
         msg: "",
         fileUrl: url,

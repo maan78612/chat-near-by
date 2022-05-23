@@ -1,6 +1,3 @@
-
-
-
 import 'package:chat_module/utilities/dimension.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,10 +10,14 @@ class PeopleTile extends StatelessWidget {
   final int msgCount;
   final Function() onTap;
 
-   PeopleTile({required this.name, this.msgCount = 0, required this.onTap, required this.img});
+  PeopleTile(
+      {required this.name,
+      this.msgCount = 0,
+      required this.onTap,
+      required this.img});
+
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(
@@ -29,10 +30,21 @@ class PeopleTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child:  img==""? const SizedBox():Image.network(img)),
+            CircleAvatar(
+              backgroundImage: img == ""
+                  ? AssetImage(
+                      AppConfig.images.addImgIcon,
+                    )
+                  : NetworkImage(img) as ImageProvider,
 
+
+              maxRadius: Dimensions.radiusLarge,
+              backgroundColor: Colors.transparent,
+
+            ),
+            // ClipRRect(
+            //     borderRadius: BorderRadius.circular(8),
+            //     child: img == "" ? const SizedBox() : Image.network(img)),
             SizedBox(width: Get.width * 0.03),
             Text(
               name,

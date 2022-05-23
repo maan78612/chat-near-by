@@ -111,17 +111,34 @@ class SignUpViewState extends State<SignUpView> {
           _topAddImageCard(model),
           signUpForm(model),
           if (!isProfile) _termsConditions(1, model),
-          button(
-              btnColor: AppConfig.colors.secondaryThemeColor,
-              textColor: AppConfig.colors.whiteColor,
-              title: isProfile ? "EDIT" : "SIGN UP",
-              onTab: () {
-                if (isProfile == false) {
-                  model.register(signUpFormKey1);
-                } else {
-                  model.pressEdit(signUpFormKey1);
-                }
-              }),
+          Row(
+            children: [
+              if(isProfile)     Expanded(
+                flex: 1,
+                child: button(
+                    btnColor: AppConfig.colors.themeColor,
+                    textColor: AppConfig.colors.whiteColor,
+                    title: "BACK",
+                    onTab: () {
+                   Get.back();
+                    }, isIcon: false),
+              ),
+              Expanded(
+                flex: 1,
+                child: button(
+                    btnColor: AppConfig.colors.secondaryThemeColor,
+                    textColor: AppConfig.colors.whiteColor,
+                    title: isProfile ? "Save" : "SIGN UP",
+                    onTab: () {
+                      if (isProfile == false) {
+                        model.register(signUpFormKey1);
+                      } else {
+                        model.pressSave(signUpFormKey1);
+                      }
+                    }, isIcon:isProfile ? false:true),
+              ),
+            ],
+          ),
           SizedBox(height: 20.h),
         ],
       ),
@@ -345,7 +362,8 @@ class SignUpViewState extends State<SignUpView> {
                                 : AssetImage(
                                     AppConfig.images.addImgIcon,
                                   ) as ImageProvider,
-                    radius: 50.0.h,
+                    radius: Dimensions.radiusDefault,
+                    maxRadius: Dimensions.radiusLarge,
                     backgroundColor: Colors.transparent,
                   ),
                   Positioned(
@@ -353,7 +371,7 @@ class SignUpViewState extends State<SignUpView> {
                     right: 5.w,
                     child: GestureDetector(
                       onTap: () {
-                        auth.getImage();
+                        auth.getImageFunc();
                       },
                       child: Container(
                         padding: EdgeInsets.all(Dimensions.paddingExtraSmall),

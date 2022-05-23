@@ -162,7 +162,7 @@ class _SignInViewState extends State<SignInView> {
                   if (signInFromKey.currentState!.validate()) {
                     auth.loginUser();
                   }
-                }),
+                }, isIcon: true),
           ),
           SizedBox(height: 10.h),
         ],

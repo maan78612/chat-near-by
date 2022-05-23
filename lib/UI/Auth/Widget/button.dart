@@ -6,13 +6,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget button(
     {required String title,
-      required Color textColor,
-      btnColor,
-      required Function() onTab}) {
+    required Color textColor,
+    required bool isIcon,
+    btnColor,
+    required Function() onTab}) {
   return GestureDetector(
     onTap: onTab,
     child: Container(
-      padding: EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),
+      padding: EdgeInsets.symmetric(horizontal: Dimensions.paddingSmallSize),
       margin: EdgeInsets.symmetric(
           horizontal: Dimensions.paddingSizeExtraLarge,
           vertical: Dimensions.paddingSmallSize),
@@ -21,22 +22,31 @@ Widget button(
           color: btnColor,
           borderRadius: BorderRadius.circular(Dimensions.radiusSmall)),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            AppConfig.images.forwardIcon,
-            scale: 5.h,
-            color: AppConfig.colors.secondaryThemeColor,
+          // const Spacer(
+          //   flex: 3,
+          // ),
+          Expanded(
+            flex: 4,
+            child: Center(
+              child: Text(
+                title,
+                style: robotoBold.copyWith(
+                    fontSize: Dimensions.fontSizeDefault, color: textColor),
+              ),
+            ),
           ),
-          Text(
-            title,
-            style: robotoBold.copyWith(
-                fontSize: Dimensions.fontSizeLarge, color: textColor),
-          ),
-          Image.asset(
-            AppConfig.images.forwardIcon,
-            scale: 5.h,
-          )
+
+          if (isIcon)
+            Expanded(
+              flex: 1,
+              child: Image.asset(
+                AppConfig.images.forwardIcon,
+                scale: 5.h,
+              ),
+            ),
+          // const Spacer( flex: 1),
         ],
       ),
     ),
