@@ -2,6 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
+    <key>UISupportsDocumentBrowser</key>
+    <true/>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>Explain why your app uses music</string>
+    <key>UIBackgroundModes</key>
+    <array>
+       <string>fetch</string>
+       <string>remote-notification</string>
+    </array>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>https</string>
+      <string>http</string>
+    </array>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Upload images for screen background</string>
     <key>NSCameraUsageDescription</key>

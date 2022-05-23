@@ -4,7 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class FStorageServices {
   Future<String> uploadSingleFile(
-      {String bucketName = 'Profile', required File file, required String userEmail}) async {
+      {required String bucketName, required File file, required String userEmail}) async {
     FirebaseStorage storage = FirebaseStorage.instance;
     Reference ref = storage
         .ref()

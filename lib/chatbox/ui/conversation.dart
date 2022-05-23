@@ -21,6 +21,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Conversation extends StatefulWidget {
   final String name;
@@ -38,12 +39,14 @@ class ConversationState extends State<Conversation> {
   late ChatRoom room;
 
   ConversationState({required this.name, required this.room});
+
   TextEditingController msgCont = TextEditingController();
   final ChatServices _chatServices = CSs();
   late File image;
   late String receiverId = "";
-   UserData ? userData;
+  UserData? userData;
   late StreamSubscription<QuerySnapshot> streamSubscription;
+
   @override
   Widget build(BuildContext context) {
     // print(room.toJson());
@@ -74,14 +77,13 @@ class ConversationState extends State<Conversation> {
                     )
                   : Container(
                       width: Get.width,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 20.w),
+                      margin: EdgeInsets.symmetric(horizontal: 20.w),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           /* this commented code need to be dom=ne if you want to show last seen*/
-                         /* SizedBox(height: 20.h),
+                          /* SizedBox(height: 20.h),
                           Align(
                             alignment: Alignment.center,
                             child: Container(
@@ -230,20 +232,20 @@ class ConversationState extends State<Conversation> {
               ),
             ),
           ),
-          // GestureDetector(
-          //   onTap: () {
-          //     setState(() {
-          //       _fileFromPhone(p);
-          //     });
-          //   },
-          //   child: const Padding(
-          //     padding: EdgeInsets.all(4.0),
-          //     child: Icon(
-          //       Icons.attach_file_sharp,
-          //       color: Colors.black,
-          //     ),
-          //   ),
-          // ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _fileFromPhone(p);
+              });
+            },
+            child: const Padding(
+              padding: EdgeInsets.all(4.0),
+              child: Icon(
+                Icons.attach_file_sharp,
+                color: Colors.black,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -318,7 +320,9 @@ class ConversationState extends State<Conversation> {
                           ? videoThumbnail(
                               message,
                             )
-                          : Text(message.msg)
+                          : messageType == MessageTypeEnums.file
+                              ? fileMessage(message, true)
+                              : Text(message.msg)
             ],
           ),
           // Align(
@@ -356,7 +360,9 @@ class ConversationState extends State<Conversation> {
                             ? imageMessage(message, false)
                             : messageType == MessageTypeEnums.video
                                 ? videoThumbnail(message)
-                                : Text(message.msg)
+                                : messageType == MessageTypeEnums.file
+                                    ? fileMessage(message, true)
+                                    : Text(message.msg)
                   ],
                 ),
               ],
@@ -441,7 +447,6 @@ class ConversationState extends State<Conversation> {
                     ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.network(msg.fileUrl)),
-
                   ],
                 ),
               ),
@@ -452,22 +457,59 @@ class ConversationState extends State<Conversation> {
     );
   }
 
+  Widget fileMessage(Message msg, bool isMyMessage) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment:
+          isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () {
+            _launchUrl(msg.fileUrl);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6.0),
+            child: Material(
+              elevation: 5.0,
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.white,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * .7,
+                    minWidth: 1),
+                child: Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: const Text("Tab to open File !")),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _launchUrl(String url) async {
+    final Uri _url = Uri.parse(url);
+    if (await canLaunchUrl(_url)) {
+      await launchUrl(_url);
+    } else {
+      throw 'Could not launch $_url';
+    }
+  }
+
   Widget userAvatar({required String? imageUrl}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CircleAvatar(
-          backgroundImage: (imageUrl??"" )== ""
+          backgroundImage: (imageUrl ?? "") == ""
               ? AssetImage(
-            AppConfig.images.addImgIcon,
-          )
+                  AppConfig.images.addImgIcon,
+                )
               : NetworkImage(imageUrl!) as ImageProvider,
-
-
           maxRadius: Dimensions.radiusLarge,
           backgroundColor: Colors.transparent,
-
         ),
         SizedBox(width: Get.width * 0.04),
       ],
@@ -499,39 +541,39 @@ class ConversationState extends State<Conversation> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       image = File(pickedFile.path);
-      sendFile(image, p);
+      sendFile(image, p, MessageTypeEnums.image);
     }
   }
 
-  // _fileFromPhone(ChatProvider p) async {
-  //   PlatformFile? pickedFile;
-  //
-  //   final result=await FilePicker.platform.pickFiles();
-  //   if(result!=null){
-  //     pickedFile=result.files.first;
-  //     final file=File(pickedFile.path!);
-  //     sendFile(file, p);
-  //   } else {
-  //     return;
-  //   }
-  //
-  // }
+  _fileFromPhone(ChatProvider p) async {
+    PlatformFile? pickedFile;
+
+    final result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      pickedFile = result.files.first;
+      final file = File(pickedFile.path!);
+      sendFile(file, p, MessageTypeEnums.file);
+    } else {
+      return;
+    }
+  }
+
   _imgFromCamera(ChatProvider p) async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       image = File(pickedFile.path);
-      sendFile(image, p);
+      sendFile(image, p, MessageTypeEnums.image);
     }
   }
 
-  //send Media Message
-  void sendFile(File chatFile, ChatProvider p) async {
+//send Media Message
+  void sendFile(File chatFile, ChatProvider p, int msgType) async {
     String url = await p.uploadFile(chatFile);
     Message msg = Message(
         msg: "",
         fileUrl: url,
         receiverId: receiverId,
-        type: MessageTypeEnums.image,
+        type: msgType,
         senderId: AppUser.user.email,
         roomId: room.roomId,
         seen: false,
@@ -548,7 +590,7 @@ class ConversationState extends State<Conversation> {
     onPressed: () {},
   );
 
-  // some functions to set seen true and fetch user details
+// some functions to set seen true and fetch user details
 
   getUserData(String? id) async {
     ChatProvider p = Provider.of<ChatProvider>(context, listen: false);

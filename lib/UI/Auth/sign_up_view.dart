@@ -362,8 +362,8 @@ class SignUpViewState extends State<SignUpView> {
                                 : AssetImage(
                                     AppConfig.images.addImgIcon,
                                   ) as ImageProvider,
-                    radius: Dimensions.radiusDefault,
-                    maxRadius: Dimensions.radiusLarge,
+
+                    maxRadius: 50.h,
                     backgroundColor: Colors.transparent,
                   ),
                   Positioned(

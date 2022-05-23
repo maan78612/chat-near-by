@@ -31,7 +31,10 @@ class ChatProvider with ChangeNotifier {
   }
 
   //create Chat
-  Future<void> initiateChat(UserData peerUser) async {
+  Future<void> initiateChat(UserData? peerUser) async {
+    if (kDebugMode) {
+      print("INITIATE CHAT");
+    }
     startLoader();
     if (peerUser != null) {
       ChatRoom? isCreated = isAlreadyCreated(peerUser.email);
@@ -55,6 +58,7 @@ class ChatProvider with ChangeNotifier {
         startLoader();
         ChatRoom cRoom = await _services.createChatRoom(room: room);
         stopLoader();
+        await fetchMyChatRooms();
         Get.to(Conversation(
           room: cRoom,
           name: peerUser.email,
@@ -69,15 +73,20 @@ class ChatProvider with ChangeNotifier {
 
   //check if already created chatroom
   ChatRoom? isAlreadyCreated(String email) {
+    print("here email is $email");
+    print("here chat rooms are is ${chatRooms.length}.");
+
     // check if chatRoom of these members already exits to avoid redundancy
     ChatRoom? room;
     List<ChatRoom> rooms = [];
     rooms.addAll(chatRooms);
+    print("here  rooms are is ${rooms.length}.");
     if (rooms.isEmpty) {
       room=null;
       return room;
     }
-    for (int i = 0; i <= rooms.length ; i++) {
+    print("here 2 rooms are is ${rooms.length}.");
+    for (int i = 0; i < rooms.length ; i++) {
       ChatRoom element = rooms[i];
       if (element.users.contains(AppUser.user.email) &&
           element.users.contains(email)) {
