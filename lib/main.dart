@@ -1,4 +1,3 @@
-
 import 'package:chat_module/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -15,9 +14,7 @@ import 'notificationBox/fmsg_handler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }
@@ -46,30 +43,28 @@ class _MyAppState extends State<MyApp> {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark));
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => ChatProvider()),
-        // Provider(create: (_) => AuthProvider()),
-        // Provider(create: (_) => ChatProvider()),
-      ],
-      child: ScreenUtilInit(
-        designSize: const Size(360, 690),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (BuildContext context, Widget? child) {
-         return GetMaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Books Exchange',
-              theme: ThemeData(
-                primarySwatch: Colors.blue,
-              ),
-              home:child,
-          );
-        },
-        child: FBMessaging(
-          page: SplashScreen(),
-        ))
-
-    );
+        providers: [
+          ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider(create: (_) => ChatProvider()),
+          // Provider(create: (_) => AuthProvider()),
+          // Provider(create: (_) => ChatProvider()),
+        ],
+        child: ScreenUtilInit(
+            designSize: const Size(360, 690),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            builder: (BuildContext context, Widget? child) {
+              return GetMaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Books Exchange',
+                theme: ThemeData(
+                  primarySwatch: Colors.blue,
+                ),
+                home: child,
+              );
+            },
+            child: FBMessaging(
+              page: SplashScreen(),
+            )));
   }
 }

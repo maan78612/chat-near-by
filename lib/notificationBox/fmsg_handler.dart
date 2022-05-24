@@ -6,9 +6,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../utilities/app_utility.dart';
+import 'local_notification_service.dart';
 
 /// Define a top-level named handler which background/terminated messages will
 /// call.
@@ -17,24 +19,11 @@ import '../utilities/app_utility.dart';
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
+
   if (kDebugMode) {
     print('Handling a background message ${message.messageId}');
   }
 }
-
-/// Create a [AndroidNotificationChannel] for heads up notifications
-const AndroidNotificationChannel channel = AndroidNotificationChannel(
-  'high_importance_channel', // id
-  'High Importance Notifications', // title
-  description: 'This channel is used for important notifications.',
-  // description
-  importance: Importance.high,
-);
-
-/// Initialize the [FlutterLocalNotificationsPlugin] package.
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
 
 // Crude counter to make messages unique
 int _messageCount = 0;
@@ -59,7 +48,7 @@ String constructFCMPayload(String token) {
 class FBMessaging extends StatefulWidget {
   final Widget page;
 
-   const FBMessaging({Key? key, required this.page}) : super(key: key);
+  const FBMessaging({Key? key, required this.page}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Application();
@@ -67,68 +56,6 @@ class FBMessaging extends StatefulWidget {
 
 class _Application extends State<FBMessaging> {
   late String _token;
-
-  Future<void> requestPermissions() async {
-
-        await FirebaseMessaging.instance.requestPermission(
-      announcement: true,
-      carPlay: true,
-      criticalAlert: true,
-    );
-  }
-
-  getFcmToken() {
-    FirebaseMessaging.instance.getToken().then((token) {
-      if (kDebugMode) {
-        print("fcm =  $token");
-      }
-      AppUtility.freshFCM = token!;
-    });
-  }
-
-  void onInit() {
-    requestPermissions();
-    FirebaseMessaging.instance.getInitialMessage().then((dynamic message) {
-      if (message != null) {
-        if (kDebugMode) {
-          print("onInit msg: $message");
-        }
-        // Navigator.pushNamed(context, '/message',
-        //     arguments: MessageArguments(message, true));
-      }
-    });
-    getFcmToken();
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                channelDescription: channel.description,
-                playSound: true,
-                // TODO add a proper drawable resource to android, for now using
-                //      one that already exists in example app.
-                icon: 'launch_background',
-              ),
-            ));
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      if (kDebugMode) {
-        print('A new onMessageOpenedApp event was published!');
-      }
-      Navigator.pushNamed(context, '/message',
-          arguments: MessageArguments(message, true));
-    });
-  }
 
   @override
   void didChangeDependencies() {
@@ -142,58 +69,74 @@ class _Application extends State<FBMessaging> {
     super.initState();
   }
 
-  Future<void> sendPushMessage() async {
-    if (_token == null) {
-      print('Unable to send FCM message, no token exists.');
-      return;
-    }
-
-    try {
-      await http.post(
-        Uri.parse('https://api.rnfirebase.io/messaging/send'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: constructFCMPayload(_token),
-      );
-      if (kDebugMode) {
-        print('FCM request for device sent!');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return widget.page;
   }
-}
 
-/// UI Widget for displaying metadata.
-// class MetaCard extends StatelessWidget {
-//   final String _title;
-//   final Widget _children;
-//
-//   // ignore: public_member_api_docs
-//   MetaCard(this._title, this._children);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//         width: double.infinity,
-//         margin: const EdgeInsets.only(left: 8, right: 8, top: 8),
-//         child: Card(
-//             child: Padding(
-//                 padding: const EdgeInsets.all(16),
-//                 child: Column(children: [
-//                   Container(
-//                       margin: const EdgeInsets.only(bottom: 16),
-//                       child:
-//                           Text(_title, style: const TextStyle(fontSize: 18))),
-//                   _children,
-//                 ]))));
-//   }
-// }
+  Future<void> onInit() async {
+    await requestPermissions();
+    await getFcmToken();
+    LocalNotificationService.initialize(Get.context!);
+    /* 1. This method call when app in terminated state and you get a notification
+    when you click on notification app open from terminated state and you can get notification data in this method */
+
+    FirebaseMessaging.instance.getInitialMessage().then(
+      (message) {
+        if (kDebugMode) {
+          print(
+              "FirebaseMessaging.instance.getInitialMessage [APP TERMINATED]");
+        }
+
+        if (message != null) {
+          if (kDebugMode) {
+            print("onInit msg when terminated: $message");
+          }
+          // Navigator.pushNamed(context, '/message',
+          //     arguments: MessageArguments(message, true));
+        }
+      },
+    );
+
+    // 2. This method only call when App in foreground it mean app must be opened
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (kDebugMode) {
+        print("FirebaseMessaging.onMessage [APP OPEN]");
+      }
+      LocalNotificationService.createAndDisplayNotification(message);
+    });
+
+
+    // 3. This method only call when App in background and not terminated(not closed)
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if (kDebugMode) {
+        print("FirebaseMessaging.onMessage [APP CLOSE BUT NOT TERMINATED]");
+      }
+      // LocalNotificationService.createAndDisplayNotification(message);
+      if (kDebugMode) {
+        print('A new onMessageOpenedApp event was published!');
+      }
+    });
+  }
+
+  Future<void> requestPermissions() async {
+    await FirebaseMessaging.instance.requestPermission(
+      announcement: true,
+      carPlay: true,
+      criticalAlert: true,
+      alert: true,
+      badge: true,
+      provisional: false,
+      sound: true,
+    );
+  }
+
+  getFcmToken() {
+    FirebaseMessaging.instance.getToken().then((token) {
+      if (kDebugMode) {
+        print("fcm =  $token");
+      }
+      AppUtility.freshFCM = token!;
+    });
+  }
+}

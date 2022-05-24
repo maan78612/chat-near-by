@@ -10,8 +10,7 @@ class MessageArguments {
   final bool openedApplication;
 
   // ignore: public_member_api_docs
-  MessageArguments(this.message, this.openedApplication)
-      : assert(message != null);
+  MessageArguments(this.message, this.openedApplication);
 }
 
 /// Displays information about a [RemoteMessage].

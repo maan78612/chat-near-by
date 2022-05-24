@@ -17,7 +17,11 @@ class FBNotification {
       InAppNotifications.sendNotification(notification);
     }
     if (sendPush) {
+
       String? fcm = user?.fcm;
+      if (kDebugMode) {
+        print("fcm is $fcm");
+      }
       PushNotification.sendNotification(fcm!, notification);
     }
   }
@@ -64,7 +68,7 @@ class PushNotification {
             headers: <String, String>{
               'Content-Type': 'application/json',
               'Authorization':
-                  'key=AAAAOH16yEI:APA91bETGEe6Eg5CNzBmVCxBIbmIxLLM5XVZPjThgEa27wSXgtONbkoya44TqbFKwVXpNf1zNp8wPmkj6a6yu_FGB4JZU0F-xGc2yLsZEwg03tYzP0Dvkx3QGUqTfmnGzhvD5PqQyP4P',
+                  'key=AAAA5UqHUQg:APA91bErQ67c_3ghq2fOTwoUNU7GoSDh-MulZE-s_LQtinzLey57mjgYovED0pqipHT3SLINogFO1gi2EW2nlQJaqBMzgDBHV-jBhFniIfHR3UCs5mHbosUoEqq8bEnEOcVxFjoKoMtY',
             },
             body: body);
     if (kDebugMode) {
