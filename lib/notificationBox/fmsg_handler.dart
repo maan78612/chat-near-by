@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:chat_module/UI/dashBoard/dashBoard.dart';
 import 'package:chat_module/notificationBox/message.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import '../UI/dashBoard/dashBoardScreens/chat.dart';
 import '../utilities/app_utility.dart';
 import 'local_notification_service.dart';
 
@@ -85,15 +87,15 @@ class _Application extends State<FBMessaging> {
       (message) {
         if (kDebugMode) {
           print(
-              "FirebaseMessaging.instance.getInitialMessage [APP TERMINATED]");
+              "FirebaseMessaging.instance.getInitialMessage [APP TERMINATED] ${message?.notification?.title}");
         }
 
         if (message != null) {
           if (kDebugMode) {
             print("onInit msg when terminated: $message");
           }
-          // Navigator.pushNamed(context, '/message',
-          //     arguments: MessageArguments(message, true));
+          /* When we click on notification it send us to chat screen*/
+          Get.offAll(const DashBoard(1));
         }
       },
     );
@@ -103,19 +105,17 @@ class _Application extends State<FBMessaging> {
       if (kDebugMode) {
         print("FirebaseMessaging.onMessage [APP OPEN]");
       }
+      /* Firebase not display notification snackBar in foreground So we need to show it here  by calling [createAndDisplayNotification] */
+      /* One we created channel in [createAndDisplayNotification] there is no need to call on background and  termination state Firebase handle it */
       LocalNotificationService.createAndDisplayNotification(message);
     });
-
 
     // 3. This method only call when App in background and not terminated(not closed)
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       if (kDebugMode) {
         print("FirebaseMessaging.onMessage [APP CLOSE BUT NOT TERMINATED]");
       }
-      // LocalNotificationService.createAndDisplayNotification(message);
-      if (kDebugMode) {
-        print('A new onMessageOpenedApp event was published!');
-      }
+      Get.offAll(const DashBoard(1));
     });
   }
 

@@ -14,7 +14,9 @@ import 'notificationBox/fmsg_handler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }
@@ -46,8 +48,7 @@ class _MyAppState extends State<MyApp> {
         providers: [
           ChangeNotifierProvider(create: (_) => AuthProvider()),
           ChangeNotifierProvider(create: (_) => ChatProvider()),
-          // Provider(create: (_) => AuthProvider()),
-          // Provider(create: (_) => ChatProvider()),
+
         ],
         child: ScreenUtilInit(
             designSize: const Size(360, 690),
@@ -56,7 +57,7 @@ class _MyAppState extends State<MyApp> {
             builder: (BuildContext context, Widget? child) {
               return GetMaterialApp(
                 debugShowCheckedModeBanner: false,
-                title: 'Books Exchange',
+                title: 'Chat Near BY',
                 theme: ThemeData(
                   primarySwatch: Colors.blue,
                 ),

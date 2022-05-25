@@ -1,3 +1,4 @@
+import 'package:chat_module/UI/dashBoard/dashBoardScreens/chat.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -5,17 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
+import '../UI/dashBoard/dashBoard.dart';
+
 class LocalNotificationService {
   /// Initialize the [FlutterLocalNotificationsPlugin] package.
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   static void initialize(BuildContext context) {
-
-    // _notificationsPlugin.resolvePlatformSpecificImplementation<
-    // AndroidFlutterLocalNotificationsPlugin>()
-    //     ?.createNotificationChannel(channel);
-
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -36,29 +34,25 @@ class LocalNotificationService {
       onSelectNotification: (String? id) async {
         if (kDebugMode) {
           print("onSelectNotification flutter local notification");
+          print(id);
         }
         if (id!.isNotEmpty) {
           if (kDebugMode) {
             print("Router Value1234 $id");
           }
 
-          /*    Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => DemoScreen(
-                id: id,
-              ),
-            ),
-          );*/
+          Get.offAll(const DashBoard(1));
         }
       },
     );
   }
 
-
-
-
   static void createAndDisplayNotification(RemoteMessage message) async {
-
+    /*
+    2 thing happening here created channel and show heads up notification on foreground
+    Heads up notification (snackBar) automatically show on background and termination state once channel created
+    So there is no need to call that function on [getInitialMessage] termination and [onMessageOpenedApp] background
+    */
     if (kDebugMode) {
       print("call: createAndDisplayNotification ");
     }
@@ -76,13 +70,14 @@ class LocalNotificationService {
             //      one that already exists in example app.
             icon: 'launch_background',
           ),
-          iOS:  const IOSNotificationDetails(
-            presentAlert: true,  // Present an alert when the notification is displayed and the application is in the foreground (only from iOS 10 onwards)
-            presentBadge: true,  // Present the badge number when the notification is displayed and the application is in the foreground (only from iOS 10 onwards)
-            presentSound: true,  // Play a sound when the notification is displayed and the application is in the foreground (only from iOS 10 onwards)
-
-          )
-      );
+          iOS: const IOSNotificationDetails(
+            presentAlert: true,
+            // Present an alert when the notification is displayed and the application is in the foreground (only from iOS 10 onwards)
+            presentBadge: true,
+            // Present the badge number when the notification is displayed and the application is in the foreground (only from iOS 10 onwards)
+            presentSound:
+                true, // Play a sound when the notification is displayed and the application is in the foreground (only from iOS 10 onwards)
+          ));
       await _notificationsPlugin.show(
         id,
         message.notification!.title,
@@ -101,7 +96,8 @@ class LocalNotificationService {
   static const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'high_importance_channel', // id
     'High Importance Notifications', // title
-    description: 'This channel is used for important notifications.', // description
-    importance: Importance.high,
+    description: 'This channel is used for important notifications.',
+    // description
+    importance: Importance.max,
   );
 }
