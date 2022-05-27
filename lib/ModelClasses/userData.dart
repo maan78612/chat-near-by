@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class UserData {
   late String imageUrl;
   late Timestamp createdAt;
-
+late String address;
   late String lastName;
   late String firstName;
   late String email;
@@ -17,6 +17,7 @@ class UserData {
   UserData(
       {required this.createdAt,
       required this.lastName,
+       required this.address,
       required this.firstName,
       required this.email,
       required this.distanceToFindUser,
@@ -27,6 +28,7 @@ class UserData {
   UserData.fromJson(dynamic json) {
 
     imageUrl = json["image_url"];
+    address = json["address"]??"";
 
     createdAt = json["created_at"];
 
@@ -43,6 +45,7 @@ class UserData {
     var map = <String, dynamic>{};
 
     map["image_url"] = imageUrl;
+    map["address"] = address;
 
     map["created_at"] = createdAt;
 

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:chat_module/ModelClasses/userData.dart';
 import 'package:chat_module/UI/Shared/image_media.dart';
+import 'package:chat_module/mapsBox/widgets/addMarker.dart';
 import 'package:chat_module/utilities/firestorage_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -50,7 +51,7 @@ class AuthProvider extends ChangeNotifier {
   bool passVisibleSignUp = false;
   bool passVisibleSignUp2 = false;
   bool selectTerms = false;
-   File? userImage;
+  File? userImage;
 
   final PageController signUpPageController = PageController();
 
@@ -156,7 +157,7 @@ class AuthProvider extends ChangeNotifier {
     isAcceptedPWDProvider = -1;
     isAcceptedConfirmPWDProvider = -1;
     isAcceptedEmail = -1;
-    userImage=null;
+    userImage = null;
     selectTerms = false;
 
     notifyListeners();
@@ -176,9 +177,7 @@ class AuthProvider extends ChangeNotifier {
   ChatProvider p = Provider.of<ChatProvider>(Get.context!, listen: false);
 
   Future getImageFunc() async {
-
-    File? pickedFile =
-    await Get.bottomSheet(ImageOptionSheet());
+    File? pickedFile = await Get.bottomSheet(ImageOptionSheet());
     if (pickedFile != null) {
       userImage = File(pickedFile.path);
     } else {
@@ -186,8 +185,6 @@ class AuthProvider extends ChangeNotifier {
         print("not added");
       }
     }
-
-
 
     notifyListeners();
   }
@@ -202,7 +199,7 @@ class AuthProvider extends ChangeNotifier {
       isAcceptedEmail = 1;
     }
 
-      print("here $isAcceptedEmail");
+    print("here $isAcceptedEmail");
 
     notifyListeners();
   }
@@ -229,25 +226,23 @@ class AuthProvider extends ChangeNotifier {
         if (kDebugMode) {
           print(value);
         }
-        createUserInDB(userImage);
+        createUserInDB(userImage, emailController.text.trim());
       });
     }
   }
 
-  void createUserInDB(File ? imageFile) async {
+  void createUserInDB(File? imageFile, String email) async {
     print("image file is $imageFile");
     imageUrlToSet = "";
     startLoader();
-    if(imageFile!=null){
+    if (imageFile != null) {
       imageUrlToSet = await fStorage.uploadSingleFile(
-          bucketName: "Profile Images",
-          file: imageFile,
-          userEmail: appUserData.email);
+          bucketName: "Profile Images", file: imageFile, userEmail: email);
     }
 
-
     startLoader();
-
+    String address =
+    await _loc.getAddressFromLatLong(currentLocation);
     FBCollections.users
         .doc(emailController.text)
         .set(UserData(
@@ -258,13 +253,12 @@ class AuthProvider extends ChangeNotifier {
           imageUrl: imageUrlToSet,
           location: currentLocation,
           distanceToFindUser: 50,
-          fcm: '',
+          fcm: '', address: address,
         ).toJson())
         .then((value) async {
       appUserData = (await getUserFromDB(emailController.text))!;
 
       clearSignUpData();
-
 
       await fetchAllUsers();
       stopLoader();
@@ -274,11 +268,10 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
-  void updateUserInDB(File ? imageFile) async {
+  void updateUserInDB(File? imageFile) async {
     imageUrlToSet = "";
     startLoader();
     if (imageFile != null) {
-
       imageUrlToSet = await fStorage.uploadSingleFile(
           bucketName: "Profile Images",
           file: imageFile,
@@ -286,9 +279,8 @@ class AuthProvider extends ChangeNotifier {
     } else {
       imageUrlToSet = appUserData.imageUrl;
     }
-
-
-
+    String address =
+        await _loc.getAddressFromLatLong(appUserData.location);
     FBCollections.users
         .doc(emailController.text)
         .update(UserData(
@@ -299,7 +291,7 @@ class AuthProvider extends ChangeNotifier {
                 distanceToFindUser: appUserData.distanceToFindUser,
                 email: appUserData.email,
                 location: appUserData.location,
-                fcm: appUserData.fcm)
+                fcm: appUserData.fcm, address: address)
             .toJson())
         .then((value) async {
       appUserData = (await getUserFromDB(appUserData.email))!;
@@ -413,11 +405,15 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> handleSignIn(String email) async {
+
     if (kDebugMode) {
       print("email $email");
     }
     appUserData = (await getUserFromDB(email))!;
     appUserData.location = currentLocation;
+    appUserData.address=
+    await _loc.getAddressFromLatLong(appUserData.location);
+
     FBCollections.users
         .doc(appUserData.email)
         .update(appUserData.toJson())
@@ -431,6 +427,7 @@ class AuthProvider extends ChangeNotifier {
     }
     await fetchAllUsers();
     await p.fetchMyChatRooms();
+
     Get.offAll(const DashBoard(0));
 
     updateFCM(AppUtility.freshFCM);
@@ -463,7 +460,7 @@ class AuthProvider extends ChangeNotifier {
 
   // To save data on Firebase
   Future<void> saveDistance(double value) async {
-   await  FBCollections.users
+    await FBCollections.users
         .doc(appUserData.email)
         .update({"distance_to_find_user": value});
 
@@ -499,13 +496,13 @@ class AuthProvider extends ChangeNotifier {
     return false;
   }
 
-   StreamSubscription<List<UserData>>? allUserStream;
+  StreamSubscription<List<UserData>>? allUserStream;
   List<UserData> nearByUser = [];
 
   Future<void> fetchAllUsers() async {
     var value = AuthServices.getAllUsers();
     if (allUserStream == null) {
-      value.listen((event) {
+      value.listen((event) async {
         nearByUser.clear();
         var temp = event.where((b) => b.email != AppUser.user.email).toList();
         for (var b in temp) {
@@ -518,7 +515,15 @@ class AuthProvider extends ChangeNotifier {
 
           notifyListeners();
         }
+        Markers.markers.clear();
+        for (var markerUser in nearByUser) {
+
+
+
+          Markers.onAddMarkerButtonPressed(markerUser);
+        }
       });
+
       if (kDebugMode) {
         print("total nearBy users are : ${nearByUser.length}");
       }

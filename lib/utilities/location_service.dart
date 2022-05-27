@@ -1,18 +1,21 @@
 import 'package:flutter/foundation.dart';
-import 'package:geocoder2/geocoder2.dart';
+import 'package:geocoding/geocoding.dart';
+
 import 'package:geolocator/geolocator.dart';
 
-import '../ModelClasses/location.dart';
+import '../ModelClasses/location.dart' as loc;
 
 class LocationServices {
-  Future<String> getAddressByLatLng(double lat, double lng) async {
-    GeoData data = await Geocoder2.getDataFromCoordinates(
-        latitude: lat, longitude: lng, googleMapApiKey: "GOOGLE_MAP_API_KEY");
-    String address = data.address;
+  Future<String> getAddressFromLatLong(loc.Location loc) async {
+    String address = "";
+    List<Placemark>? placemarks =
+        await placemarkFromCoordinates(loc.lat, loc.long);
 
-    if (kDebugMode) {
-      print("GEOCODER :::: FOUND : $address");
-    }
+    Placemark place = placemarks[0];
+    address =
+        '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+
+    print("user address is $address");
     return address;
   }
 
@@ -31,11 +34,13 @@ class LocationServices {
     return position;
   }
 
-  double findDistance(Location myLocation, Location bookLocation) {
+  double findDistance(loc.Location myLocation, loc.Location bookLocation) {
     double distance = Geolocator.distanceBetween(
         myLocation.lat, myLocation.long, bookLocation.lat, bookLocation.long);
     distance = distance / 1609;
-    print("Distance is = $distance");
+    if (kDebugMode) {
+      print("Distance is = $distance");
+    }
     return distance;
   }
 }

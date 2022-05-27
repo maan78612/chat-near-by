@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../../Services/auth_services.dart';
 import '../../chatbox/provider/chat_provider.dart';
 import '../../chatbox/ui/dms.dart';
+import '../../mapsBox/mapScreen.dart';
 import '../Auth/SignInView.dart';
 import 'dashBoardScreens/Profile.dart';
 import 'dashBoardScreens/chat.dart';
@@ -165,7 +166,7 @@ class _DashBoardState extends State<DashBoard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _drawerItem(0, "Home", AppConfig.images.home),
+                    _drawerItem(0, "Near By", AppConfig.images.mapsIcon),
                     _drawerItem(1, "Notification", AppConfig.images.bell),
                     _drawerItem(2, "Chat Box", AppConfig.images.chat),
                     const Spacer(),
@@ -181,13 +182,13 @@ class _DashBoardState extends State<DashBoard> {
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                   icon: ImageIcon(
-                    AssetImage(AppConfig.images.home),
+                    AssetImage(AppConfig.images.mapsIcon),
                     color: _selectedIndex == 0
                         ? AppConfig.colors.secondaryThemeColor
                         : AppConfig.colors.themeColor,
                   ),
-                  label: 'Home',
-                  backgroundColor: Color(0xffF4F2F2)),
+                  label: 'Near BY',
+                  backgroundColor: const Color(0xffF4F2F2)),
               BottomNavigationBarItem(
                   icon: StreamBuilder(
                       stream: Provider.of<ChatProvider>(context, listen: false)
@@ -474,7 +475,7 @@ class _DashBoardState extends State<DashBoard> {
   _getPage(int page) {
     switch (page) {
       case 0:
-        return  HomeScreen();
+        return  MapScreen();
       case 1:
         return Chat();
       case 2:
