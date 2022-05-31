@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'Provider/auth.dart';
 import 'chatbox/provider/chat_provider.dart';
+import 'mapsBox/Provider/mapProvider.dart';
 import 'notificationBox/fmsg_handler.dart';
 
 Future<void> main() async {
@@ -53,6 +54,7 @@ class _MyAppState extends State<MyApp> {
         providers: [
           ChangeNotifierProvider(create: (_) => AuthProvider()),
           ChangeNotifierProvider(create: (_) => ChatProvider()),
+          ChangeNotifierProvider(create: (_) => MapProvider()),
 
         ],
         child: ScreenUtilInit(

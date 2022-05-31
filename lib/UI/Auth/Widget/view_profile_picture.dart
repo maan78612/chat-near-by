@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_module/ModelClasses/userData.dart';
 import 'package:chat_module/constants/app_constants.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class ProfilePreview extends StatelessWidget {
                       decoration: BoxDecoration(
                       image: DecorationImage(
                         fit: BoxFit.contain,
-                        image: NetworkImage(AppUser.user.imageUrl),
+                        image: CachedNetworkImageProvider(AppUser.user.imageUrl),
                       ),
                     ))
                   : Container(

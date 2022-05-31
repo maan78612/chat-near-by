@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:chat_module/ModelClasses/userData.dart';
 import 'package:chat_module/UI/Shared/image_media.dart';
@@ -8,15 +10,16 @@ import 'package:chat_module/utilities/firestorage_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-
 import '../ModelClasses/location.dart';
 import '../Services/auth_services.dart';
 import '../UI/Auth/SignInView.dart';
@@ -241,8 +244,7 @@ class AuthProvider extends ChangeNotifier {
     }
 
     startLoader();
-    String address =
-    await _loc.getAddressFromLatLong(currentLocation);
+    String address = await _loc.getAddressFromLatLong(currentLocation);
     FBCollections.users
         .doc(emailController.text)
         .set(UserData(
@@ -253,7 +255,8 @@ class AuthProvider extends ChangeNotifier {
           imageUrl: imageUrlToSet,
           location: currentLocation,
           distanceToFindUser: 50,
-          fcm: '', address: address,
+          fcm: '',
+          address: address,
         ).toJson())
         .then((value) async {
       appUserData = (await getUserFromDB(emailController.text))!;
@@ -261,6 +264,7 @@ class AuthProvider extends ChangeNotifier {
       clearSignUpData();
 
       await fetchAllUsers();
+
       stopLoader();
       Get.offAll(() => const DashBoard(0));
       // Get.bottomSheet(SuccessfullySignUpBottom(),
@@ -279,8 +283,7 @@ class AuthProvider extends ChangeNotifier {
     } else {
       imageUrlToSet = appUserData.imageUrl;
     }
-    String address =
-        await _loc.getAddressFromLatLong(appUserData.location);
+    String address = await _loc.getAddressFromLatLong(appUserData.location);
     FBCollections.users
         .doc(emailController.text)
         .update(UserData(
@@ -291,7 +294,8 @@ class AuthProvider extends ChangeNotifier {
                 distanceToFindUser: appUserData.distanceToFindUser,
                 email: appUserData.email,
                 location: appUserData.location,
-                fcm: appUserData.fcm, address: address)
+                fcm: appUserData.fcm,
+                address: address)
             .toJson())
         .then((value) async {
       appUserData = (await getUserFromDB(appUserData.email))!;
@@ -405,14 +409,13 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> handleSignIn(String email) async {
-
     if (kDebugMode) {
       print("email $email");
     }
     appUserData = (await getUserFromDB(email))!;
     appUserData.location = currentLocation;
-    appUserData.address=
-    await _loc.getAddressFromLatLong(appUserData.location);
+    appUserData.address =
+        await _loc.getAddressFromLatLong(appUserData.location);
 
     FBCollections.users
         .doc(appUserData.email)
@@ -426,6 +429,7 @@ class AuthProvider extends ChangeNotifier {
       print("user found = ${appUserData.toJson()}");
     }
     await fetchAllUsers();
+
     await p.fetchMyChatRooms();
 
     Get.offAll(const DashBoard(0));
@@ -504,6 +508,7 @@ class AuthProvider extends ChangeNotifier {
     if (allUserStream == null) {
       value.listen((event) async {
         nearByUser.clear();
+        Markers.markers.clear();
         var temp = event.where((b) => b.email != AppUser.user.email).toList();
         for (var b in temp) {
           double dist =
@@ -511,22 +516,16 @@ class AuthProvider extends ChangeNotifier {
 
           if (dist <= AppUser.user.distanceToFindUser) {
             nearByUser.add(b);
-          }
 
+            await Markers.customMarker(b);
+          }
+          if (kDebugMode) {
+            print("total markers length${Markers.markers.length}");
+            print("total nearBy users are  ${nearByUser.length}");
+          }
           notifyListeners();
         }
-        Markers.markers.clear();
-        for (var markerUser in nearByUser) {
-
-
-
-          Markers.onAddMarkerButtonPressed(markerUser);
-        }
       });
-
-      if (kDebugMode) {
-        print("total nearBy users are : ${nearByUser.length}");
-      }
     }
   }
 

@@ -17,16 +17,13 @@ class MapScreen extends StatefulWidget {
 class MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller = Completer();
 
-  static  final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(AppUser.user.location.lat, AppUser.user.location.long),
-    zoom: 14.4746,
-  );
+
 
   static  final CameraPosition initialCameraPosition = CameraPosition(
       bearing: 192.8334901395799,
       target:  LatLng(AppUser.user.location.lat, AppUser.user.location.long),
       tilt: 59.440717697143555,
-      zoom: 11);
+      zoom: 10);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +31,9 @@ class MapScreenState extends State<MapScreen> {
       return  Scaffold(
         body: GoogleMap(
           mapType: MapType.normal,
-          initialCameraPosition: _kGooglePlex,
+          zoomGesturesEnabled: true,
+          tiltGesturesEnabled: false,
+          initialCameraPosition: initialCameraPosition,
           onMapCreated: (GoogleMapController controller) {
             _controller.complete(controller);
           },

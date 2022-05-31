@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_module/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,7 +29,7 @@ class _ProfileState extends State<Profile> {
                 children: [
                   CircleAvatar(
                     backgroundImage:  auth.appUserData.imageUrl != ""
-                        ? NetworkImage(auth.appUserData.imageUrl)
+                        ? CachedNetworkImageProvider(auth.appUserData.imageUrl)
                         : AssetImage(
                       AppConfig.images.addImgIcon,
                     ) as ImageProvider,
@@ -78,8 +79,10 @@ class _ProfileState extends State<Profile> {
                       max: 50,
                       divisions: 50,
                       label: '${auth.appUserData.distanceToFindUser}',
-                      onChangeEnd: (value) {
-                        auth.fetchAllUsers();
+                      onChangeEnd: (value) async {
+                         auth.fetchAllUsers();
+
+
 
                       },
                       onChanged: (value) async {

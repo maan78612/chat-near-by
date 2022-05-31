@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_module/Provider/auth.dart';
-import 'package:chat_module/UI/dashBoard/dashBoardScreens/homeScreen.dart';
+
 import 'package:chat_module/constants/app_constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -14,6 +15,7 @@ import '../../chatbox/provider/chat_provider.dart';
 import '../../chatbox/ui/dms.dart';
 import '../../mapsBox/mapScreen.dart';
 import '../Auth/SignInView.dart';
+import 'dashBoardScreens/Maps.dart';
 import 'dashBoardScreens/Profile.dart';
 import 'dashBoardScreens/chat.dart';
 import 'dashBoardScreens/notification.dart';
@@ -113,7 +115,7 @@ class _DashBoardState extends State<DashBoard> {
                     children: [
                       CircleAvatar(
                         backgroundImage: auth.appUserData.imageUrl != null
-                            ? NetworkImage(auth.appUserData.imageUrl)
+                            ? CachedNetworkImageProvider(auth.appUserData.imageUrl)
                             : AssetImage(
                                 AppConfig.images.addImgIcon,
                               ) as ImageProvider,
@@ -475,16 +477,16 @@ class _DashBoardState extends State<DashBoard> {
   _getPage(int page) {
     switch (page) {
       case 0:
-        return  MapScreen();
+        return  const MapsDashboard();
       case 1:
-        return Chat();
+        return ChatDashBoard();
       case 2:
         return NotificationApps();
       case 3:
         return Profile();
 
       default:
-        return  HomeScreen();
+        return  const MapsDashboard();
     }
   }
 

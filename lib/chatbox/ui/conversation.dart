@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_module/ModelClasses/userData.dart';
 import 'package:chat_module/chatbox/chat_enums.dart';
 import 'package:chat_module/chatbox/models/chat_room.dart';
@@ -45,7 +46,7 @@ class ConversationState extends State<Conversation> {
   late File image;
   late String receiverId = "";
   UserData? userData;
-  late StreamSubscription<QuerySnapshot> streamSubscription;
+   StreamSubscription<QuerySnapshot>? streamSubscription;
 
   @override
   Widget build(BuildContext context) {
@@ -446,7 +447,7 @@ class ConversationState extends State<Conversation> {
                   children: [
                     ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.network(msg.fileUrl)),
+                        child: CachedNetworkImage(imageUrl: msg.fileUrl,)),
                   ],
                 ),
               ),
@@ -507,7 +508,7 @@ class ConversationState extends State<Conversation> {
               ? AssetImage(
                   AppConfig.images.addImgIcon,
                 )
-              : NetworkImage(imageUrl!) as ImageProvider,
+              : CachedNetworkImageProvider(imageUrl!) as ImageProvider,
           maxRadius: Dimensions.radiusLarge,
           backgroundColor: Colors.transparent,
         ),
@@ -649,7 +650,7 @@ class ConversationState extends State<Conversation> {
 
   @override
   void dispose() {
-    streamSubscription.cancel();
+    streamSubscription?.cancel();
     super.dispose();
   }
 }

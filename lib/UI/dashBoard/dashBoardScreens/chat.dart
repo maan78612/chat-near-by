@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import '../../../chatbox/ui/dms.dart';
 
 
-class Chat extends StatefulWidget {
+class ChatDashBoard extends StatefulWidget {
   @override
-  _ChatState createState() => _ChatState();
+  _ChatDashBoardState createState() => _ChatDashBoardState();
 }
 
-class _ChatState extends State<Chat> {
+class _ChatDashBoardState extends State<ChatDashBoard> {
   @override
   Widget build(BuildContext context) {
     return DMs();

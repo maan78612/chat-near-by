@@ -71,8 +71,8 @@ class _SignInViewState extends State<SignInView> {
 
   Container loginCard(AuthProvider auth) {
     return Container(
-   // height: Responsive.isDesktop()?300.h:null,
-   width: Responsive.isMobile()?null:170.w,
+      // height: Responsive.isDesktop()?300.h:null,
+      width: Responsive.isMobile() ? null : 170.w,
       padding: EdgeInsets.all(Dimensions.paddingSmallSize),
       margin: EdgeInsets.all(Dimensions.paddingSizeLarge),
       decoration: BoxDecoration(
@@ -162,7 +162,8 @@ class _SignInViewState extends State<SignInView> {
                   if (signInFromKey.currentState!.validate()) {
                     auth.loginUser();
                   }
-                }, isIcon: true),
+                },
+                isIcon: true),
           ),
           SizedBox(height: 10.h),
         ],
@@ -198,6 +199,4 @@ class _SignInViewState extends State<SignInView> {
       ),
     );
   }
-
-
 }

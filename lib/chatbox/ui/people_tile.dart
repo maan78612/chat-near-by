@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_module/utilities/dimension.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -35,7 +36,7 @@ class PeopleTile extends StatelessWidget {
                   ? AssetImage(
                       AppConfig.images.addImgIcon,
                     )
-                  : NetworkImage(img) as ImageProvider,
+                  : CachedNetworkImageProvider(img) as ImageProvider,
 
 
               maxRadius: Dimensions.radiusLarge,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_module/UI/Shared/customTextField.dart';
 import 'package:chat_module/constants/app_constants.dart';
 import 'package:chat_module/utilities/show_message.dart';
@@ -358,7 +359,7 @@ class SignUpViewState extends State<SignUpView> {
                                 null)
                             ? FileImage(auth.userImage!)
                             : (isProfile == true && auth.appUserData.imageUrl != "")
-                                ? NetworkImage(auth.appUserData.imageUrl)
+                                ? CachedNetworkImageProvider(auth.appUserData.imageUrl)
                                 : AssetImage(
                                     AppConfig.images.addImgIcon,
                                   ) as ImageProvider,
