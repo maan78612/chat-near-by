@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:984797892872:android:9123f30cbf29a8da251cbd",
+        "mobilesdk_app_id": "1:984797892872:android:ea306c5d28b26d07251cbd",
         "android_client_info": {
-          "package_name": "com.example.chat_near_by"
+          "package_name": "com.example.chatNearBy"
         }
       },
       "oauth_client": [

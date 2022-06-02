@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDh2Fih0yPME_TD7Ld4wttH7miBbCx0c1U',
-    appId: '1:984797892872:android:9123f30cbf29a8da251cbd',
+    appId: '1:984797892872:android:ea306c5d28b26d07251cbd',
     messagingSenderId: '984797892872',
     projectId: 'chat-near-by',
     storageBucket: 'chat-near-by.appspot.com',
@@ -66,11 +66,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBRB1I0Flk1Zr5GhOzgbQqvmKtThdwiDsE',
-    appId: '1:984797892872:ios:5a122b70d60b56fe251cbd',
+    appId: '1:984797892872:ios:111152473e0f7416251cbd',
     messagingSenderId: '984797892872',
     projectId: 'chat-near-by',
     storageBucket: 'chat-near-by.appspot.com',
-    iosClientId: '984797892872-4gh80vfjp869urprtq67srnu8036gp31.apps.googleusercontent.com',
-    iosBundleId: 'com.example.chatModule',
+    iosClientId: '984797892872-urjf993jgudbcv6gptrgtsgshgqsdbrf.apps.googleusercontent.com',
+    iosBundleId: 'com.example.chatNearBy',
   );
 }

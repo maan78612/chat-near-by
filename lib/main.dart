@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
+import 'biometricBox/Provider/biometricProvider.dart';
 import 'firebase_options.dart';
 import 'Provider/auth.dart';
 import 'chatbox/provider/chat_provider.dart';
@@ -55,6 +56,7 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider(create: (_) => AuthProvider()),
           ChangeNotifierProvider(create: (_) => ChatProvider()),
           ChangeNotifierProvider(create: (_) => MapProvider()),
+          ChangeNotifierProvider(create: (_) => BiometricProvider()),
 
         ],
         child: ScreenUtilInit(

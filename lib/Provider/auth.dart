@@ -24,6 +24,7 @@ import '../ModelClasses/location.dart';
 import '../Services/auth_services.dart';
 import '../UI/Auth/SignInView.dart';
 import '../UI/dashBoard/dashBoard.dart';
+import '../biometricBox/Provider/biometricProvider.dart';
 import '../chatbox/provider/chat_provider.dart';
 import '../constants/app_constants.dart';
 import '../constants/firebase_collections.dart';
@@ -235,7 +236,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   void createUserInDB(File? imageFile, String email) async {
-    print("image file is $imageFile");
+    if (kDebugMode) {
+      print("image file is $imageFile");
+    }
     imageUrlToSet = "";
     startLoader();
     if (imageFile != null) {
@@ -328,25 +331,40 @@ class AuthProvider extends ChangeNotifier {
 /////////////////////////LOG IN///////////////////////////
 
   Future<void> autoLogin() async {
-    startLoader();
-
+    BiometricProvider biometricProvider =
+        Provider.of(Get.context!, listen: false);
     await fetchCurrentLatLng();
     User? user = await AuthServices.getCurrentUser();
+
     if (kDebugMode) {
       print("$user");
+      print("starting biometric authentication");
     }
-    if (user != null) {
-      if (kDebugMode) {
-        print("not null");
-        print("user login");
-      }
 
-      handleSignIn(user.email!);
-      stopLoader();
+    if (user != null) {
+      await biometricProvider.onInIt().then((isAuthenticated) {
+        if (kDebugMode) {
+          print("is authenticated in auto sign in function $isAuthenticated");
+        }
+        if (isAuthenticated) {
+          if (kDebugMode) {
+            print("not null");
+            print("user login");
+          }
+
+          startLoader();
+          handleSignIn(user.email!);
+          stopLoader();
+        } else {
+          stopLoader();
+          Get.off(() => SignInView());
+        }
+      });
     } else {
       stopLoader();
       Get.off(() => SignInView());
     }
+
     notifyListeners();
   }
 
