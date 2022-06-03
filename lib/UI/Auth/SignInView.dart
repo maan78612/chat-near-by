@@ -4,22 +4,20 @@ import 'package:chat_module/Provider/auth.dart';
 import 'package:chat_module/UI/Auth/sign_up_view.dart';
 import 'package:chat_module/UI/Shared/customTextField.dart';
 import 'package:chat_module/constants/app_constants.dart';
+import 'package:chat_module/translations/locale_keys.g.dart';
 import 'package:chat_module/utilities/app_utility.dart';
 import 'package:chat_module/utilities/dimension.dart';
 import 'package:chat_module/utilities/validator.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:provider/provider.dart';
-
 import '../../utilities/styles.dart';
 import 'Widget/appBar.dart';
 import 'Widget/button.dart';
+import 'package:get/get.dart' hide Trans;
 
 class SignInView extends StatefulWidget {
   @override
@@ -58,6 +56,33 @@ class _SignInViewState extends State<SignInView> {
                     children: [
                       loginCard(auth),
                       signUpText(auth),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ElevatedButton(
+                                onPressed: ()  async {
+                                  await context.setLocale(const Locale('en'));
+                                  Get.updateLocale(const Locale('en'));
+                                  setState(() {});
+                                },
+                                child: const Text("English")),
+                            ElevatedButton(
+                                onPressed: () async {
+                                  await context.setLocale(const Locale('ar'));
+                                  Get.updateLocale(const Locale('ar'));
+                                },
+                                child: const Text("عربي")),
+                            ElevatedButton(
+                                onPressed: () async {
+                                  await context.setLocale(const Locale('fr'));
+                                  Get.updateLocale(const Locale('fr'));
+                                },
+                                child: const Text("Francais")),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -70,8 +95,9 @@ class _SignInViewState extends State<SignInView> {
   }
 
   Container loginCard(AuthProvider auth) {
+    print(LocaleKeys.login.tr());
     return Container(
-      // height: Responsive.isDesktop()?300.h:null,
+
       width: Responsive.isMobile() ? null : 170.w,
       padding: EdgeInsets.all(Dimensions.paddingSmallSize),
       margin: EdgeInsets.all(Dimensions.paddingSizeLarge),
@@ -82,7 +108,7 @@ class _SignInViewState extends State<SignInView> {
       child: Column(
         children: [
           Text(
-            "LOGIN",
+            LocaleKeys.login.tr(),
             style: robotoRegular.copyWith(
                 fontSize: Dimensions.fontSizeExtraLarge,
                 color: AppConfig.colors.themeColor),
@@ -97,8 +123,8 @@ class _SignInViewState extends State<SignInView> {
               children: [
                 GlobalFormField(
                   index: 1,
-                  hint: "User Email",
-                  title: "Email",
+                  hint: LocaleKeys.user_email.tr(),
+                  title: LocaleKeys.email.tr(),
                   titleColor: AppConfig.colors.fieldTitleColor,
                   prefixIcon: AppConfig.images.mailIcon,
                   controller: auth.loginEmailController,
@@ -113,8 +139,8 @@ class _SignInViewState extends State<SignInView> {
                 ),
                 GlobalFormField(
                   index: 1,
-                  hint: "Please enter your password",
-                  title: "Password",
+                  hint: LocaleKeys.please_enter_pass.tr(),
+                  title: LocaleKeys.Password.tr(),
                   titleColor: AppConfig.colors.fieldTitleColor,
                   prefixIcon: AppConfig.images.lockIcon,
                   controller: auth.loginPassController,
@@ -142,7 +168,7 @@ class _SignInViewState extends State<SignInView> {
               child: Align(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  "Forgot Password ?",
+                  LocaleKeys.forgot_password.tr(),
                   style: robotoRegular.copyWith(
                       fontSize: Dimensions.fontSizeDefault,
                       color: AppConfig.colors.blackGrey),
@@ -157,7 +183,7 @@ class _SignInViewState extends State<SignInView> {
             child: button(
                 btnColor: AppConfig.colors.secondaryThemeColor,
                 textColor: AppConfig.colors.whiteColor,
-                title: "LOG IN",
+                title: LocaleKeys.login.tr(),
                 onTab: () {
                   if (signInFromKey.currentState!.validate()) {
                     auth.loginUser();
@@ -176,13 +202,13 @@ class _SignInViewState extends State<SignInView> {
       text: TextSpan(
         children: [
           TextSpan(
-            text: 'Don\'t have account ? Sign up ',
+            text: "${LocaleKeys.dont_have_account.tr()} ",
             style: robotoMedium.copyWith(
                 fontSize: Dimensions.fontSizeLarge,
                 color: AppConfig.colors.whiteColor),
           ),
           TextSpan(
-              text: 'here',
+              text: LocaleKeys.here.tr(),
               style: robotoMedium.copyWith(
                   fontSize: Dimensions.fontSizeLarge,
                   color: AppConfig.colors.blackGrey,
@@ -192,7 +218,7 @@ class _SignInViewState extends State<SignInView> {
                   auth.userImage = null;
                   Get.off(SignUpView(
                     isProfile: false,
-                    appBarTitle: "Sign Up",
+
                   ));
                 }),
         ],

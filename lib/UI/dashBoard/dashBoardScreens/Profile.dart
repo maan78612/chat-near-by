@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_module/constants/app_constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,11 +29,11 @@ class _ProfileState extends State<Profile> {
               child: Column(
                 children: [
                   CircleAvatar(
-                    backgroundImage:  auth.appUserData.imageUrl != ""
+                    backgroundImage: auth.appUserData.imageUrl != ""
                         ? CachedNetworkImageProvider(auth.appUserData.imageUrl)
                         : AssetImage(
-                      AppConfig.images.addImgIcon,
-                    ) as ImageProvider,
+                            AppConfig.images.addImgIcon,
+                          ) as ImageProvider,
                     radius: Get.width * 0.15,
                     backgroundColor: Colors.transparent,
                   ),
@@ -80,16 +81,14 @@ class _ProfileState extends State<Profile> {
                       divisions: 50,
                       label: '${auth.appUserData.distanceToFindUser}',
                       onChangeEnd: (value) async {
-                         auth.fetchAllUsers();
-
-
-
+                        auth.fetchAllUsers();
                       },
                       onChanged: (value) async {
                         await auth.setDistance(value);
                       },
                     ),
                   ),
+
                 ],
               )),
         ),
@@ -103,7 +102,7 @@ class _ProfileState extends State<Profile> {
       onTap: () {
         auth.userImage;
         Get.to(SignUpView(
-          appBarTitle: " Profile",
+
           isProfile: true,
         ));
       },

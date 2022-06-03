@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 
@@ -7,16 +9,20 @@ import '../ModelClasses/location.dart' as loc;
 
 class LocationServices {
   Future<String> getAddressFromLatLong(loc.Location loc) async {
-    String address = "";
-    List<Placemark>? placemarks =
-        await placemarkFromCoordinates(loc.lat, loc.long);
+    if (kIsWeb) {
+      return "";
+    } else {
+      String address = "";
+      List<Placemark>? placemarks =
+          await placemarkFromCoordinates(loc.lat, loc.long);
 
-    Placemark place = placemarks[0];
-    address =
-        '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+      Placemark place = placemarks[0];
+      address =
+          '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
 
-    print("user address is $address");
-    return address;
+      print("user address is $address");
+      return address;
+    }
   }
 
   Future<Position> getCurrentLocation() async {

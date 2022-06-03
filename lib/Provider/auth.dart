@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
-
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:chat_module/ModelClasses/userData.dart';
 import 'package:chat_module/UI/Shared/image_media.dart';
 import 'package:chat_module/mapsBox/widgets/addMarker.dart';
@@ -12,13 +12,11 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:provider/provider.dart';
 import '../ModelClasses/location.dart';
 import '../Services/auth_services.dart';
@@ -338,28 +336,36 @@ class AuthProvider extends ChangeNotifier {
 
     if (kDebugMode) {
       print("$user");
-      print("starting biometric authentication");
     }
 
     if (user != null) {
-      await biometricProvider.onInIt().then((isAuthenticated) {
+      if (kIsWeb) {
+        startLoader();
+        handleSignIn(user.email!);
+        stopLoader();
+      } else {
         if (kDebugMode) {
-          print("is authenticated in auto sign in function $isAuthenticated");
+          print("starting biometric authentication");
         }
-        if (isAuthenticated) {
+        await biometricProvider.onInIt().then((isAuthenticated) {
           if (kDebugMode) {
-            print("not null");
-            print("user login");
+            print("is authenticated in auto sign in function $isAuthenticated");
           }
+          if (isAuthenticated) {
+            if (kDebugMode) {
+              print("not null");
+              print("user login");
+            }
 
-          startLoader();
-          handleSignIn(user.email!);
-          stopLoader();
-        } else {
-          stopLoader();
-          Get.off(() => SignInView());
-        }
-      });
+            startLoader();
+            handleSignIn(user.email!);
+            stopLoader();
+          } else {
+            stopLoader();
+            Get.off(() => SignInView());
+          }
+        });
+      }
     } else {
       stopLoader();
       Get.off(() => SignInView());

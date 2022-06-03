@@ -3,14 +3,15 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_module/UI/Shared/customTextField.dart';
 import 'package:chat_module/constants/app_constants.dart';
+import 'package:chat_module/translations/locale_keys.g.dart';
 import 'package:chat_module/utilities/show_message.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart' hide Trans;
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import 'package:provider/provider.dart';
@@ -25,24 +26,24 @@ import 'Widget/appBar.dart';
 import 'Widget/button.dart';
 
 class SignUpView extends StatefulWidget {
-  String appBarTitle;
+
   bool isProfile;
 
-  SignUpView({Key? key, required this.isProfile, required this.appBarTitle})
+  SignUpView({Key? key, required this.isProfile})
       : super(key: key);
 
   @override
   SignUpViewState createState() =>
-      SignUpViewState(appBarTitle: appBarTitle, isProfile: isProfile);
+      SignUpViewState(isProfile: isProfile);
 }
 
 class SignUpViewState extends State<SignUpView> {
   final signUpFormKey1 = GlobalKey<FormState>();
 
-  String appBarTitle;
+
   bool isProfile;
 
-  SignUpViewState({required this.isProfile, required this.appBarTitle});
+  SignUpViewState({required this.isProfile, });
 
   @override
   void initState() {
@@ -101,7 +102,7 @@ class SignUpViewState extends State<SignUpView> {
       child: Column(
         children: [
           Text(
-            isProfile ? "Edit Profile" : "SIGN UP",
+            isProfile ?  LocaleKeys.editProfile.tr():LocaleKeys.signUp.tr() ,
             style: robotoRegular.copyWith(
                 fontSize: Dimensions.fontSizeExtraLarge,
                 color: AppConfig.colors.themeColor),
@@ -129,7 +130,7 @@ class SignUpViewState extends State<SignUpView> {
                 child: button(
                     btnColor: AppConfig.colors.secondaryThemeColor,
                     textColor: AppConfig.colors.whiteColor,
-                    title: isProfile ? "Save" : "SIGN UP",
+                    title: isProfile ? "SAVE" : "SIGN UP",
                     onTab: () {
                       if (isProfile == false) {
                         model.register(signUpFormKey1);
@@ -154,8 +155,8 @@ class SignUpViewState extends State<SignUpView> {
         children: [
           GlobalFormField(
             index: 2,
-            hint: "Enter First Name",
-            title: "First Name",
+            hint: LocaleKeys.firstNameHint.tr(),
+            title: LocaleKeys.firstName.tr(),
             titleColor: AppConfig.colors.fieldTitleColor,
             prefixIcon: AppConfig.images.personIcon,
             controller: model.firstNameController,
@@ -170,8 +171,8 @@ class SignUpViewState extends State<SignUpView> {
           ),
           GlobalFormField(
             index: 3,
-            hint: "Enter Last Name",
-            title: "Last Name",
+            hint: LocaleKeys.lastNameHint.tr(),
+            title: LocaleKeys.lastName.tr(),
             titleColor: AppConfig.colors.fieldTitleColor,
             prefixIcon: AppConfig.images.personIcon,
             controller: model.lastNameController,
@@ -188,8 +189,8 @@ class SignUpViewState extends State<SignUpView> {
             GlobalFormField(
               index: 6,
               isEmail: true,
-              hint: "Please enter your registered email",
-              title: "Email",
+              hint: LocaleKeys.emailHint.tr(),
+              title: LocaleKeys.email.tr(),
               titleColor: AppConfig.colors.fieldTitleColor,
               prefixIcon: AppConfig.images.mailIcon,
               controller: model.emailController,
@@ -204,9 +205,9 @@ class SignUpViewState extends State<SignUpView> {
           if (!isProfile)
             GlobalFormField(
               isPassword: true,
-              title: "Password",
+              title: LocaleKeys.Password.tr(),
               index: 7,
-              hint: "Please enter your password",
+              hint: LocaleKeys.please_enter_pass.tr(),
               titleColor: AppConfig.colors.fieldTitleColor,
               prefixIcon: AppConfig.images.lockIcon,
               controller: model.passwordController,
@@ -221,9 +222,9 @@ class SignUpViewState extends State<SignUpView> {
           if (!isProfile)
             GlobalFormField(
               isPassword: true,
-              title: "Confirm Password",
+              title:LocaleKeys.confirmPass.tr(),
               index: 8,
-              hint: "Confirm your password",
+              hint: LocaleKeys.confirmPassHint.tr(),
               titleColor: AppConfig.colors.fieldTitleColor,
               prefixIcon: AppConfig.images.lockIcon,
               controller: model.confirmPasswordController,
@@ -247,13 +248,13 @@ class SignUpViewState extends State<SignUpView> {
         text: TextSpan(
           children: [
             TextSpan(
-              text: 'Existing User? ',
+              text: LocaleKeys.exsistingUser.tr(),
               style: robotoMedium.copyWith(
                   fontSize: Dimensions.fontSizeLarge,
                   color: AppConfig.colors.whiteColor),
             ),
             TextSpan(
-                text: 'Login',
+                text: LocaleKeys.login.tr(),
                 style: robotoMedium.copyWith(
                     fontSize: Dimensions.fontSizeLarge,
                     color: AppConfig.colors.blackGrey,
@@ -297,20 +298,20 @@ class SignUpViewState extends State<SignUpView> {
           ),
           GestureDetector(
             onTap: () {
-              ShowMessage.toast("Terms & Conditions");
+              ShowMessage.toast(LocaleKeys.termConToast.tr());
             },
             child: Padding(
               padding: EdgeInsets.symmetric(
                   vertical: 10.h, horizontal:Responsive.isMobile()?10.w:5.w),
               child: RichText(
                 text: TextSpan(
-                  text: "I agree with ",
-                  style: robotoMedium.copyWith(
+                  text: "${LocaleKeys.IAgreeWith.tr()} ",
+                  style: robotoRegular.copyWith(
                       fontSize: Responsive.isMobile()?Dimensions.fontSizeDefault:Dimensions.fontSizeSmall,
                       color: AppConfig.colors.blackColor),
                   children: <TextSpan>[
                     TextSpan(
-                      text: "Terms & Conditions ",
+                      text: LocaleKeys.termConToast.tr(),
                       style: robotoMedium.copyWith(
                           fontSize: Responsive.isMobile()?Dimensions.fontSizeDefault:Dimensions.fontSizeSmall,
                           color: AppConfig.colors.blackColor),
@@ -341,7 +342,7 @@ class SignUpViewState extends State<SignUpView> {
         child: Column(
           children: [
             Text(
-              isProfile ? "Update your Profile Picture" : "Add image",
+              isProfile ? LocaleKeys.updateProfilePic.tr() : LocaleKeys.addImage.tr(),
               style: robotoBold.copyWith(
                   fontSize: Dimensions.fontSizeDefault,
                   color: AppConfig.colors.blackColor),
