@@ -1,12 +1,7 @@
 {
   "login": "تسجيل الدخول",
   "email": "البريد الإلكتروني",
-  "user_email": "البريد الالكتروني للمستخدم",
-  "Password": "كلمة المرور",
-  "please_enter_pass": "من فضلك أدخل رقمك السري",
-  "forgot_password": "هل نسيت كلمة السر؟",
   "here": "من هنا",
-  "dont_have_account": "ليس لديك حساب؟ قم بالتسجيل",
   "signUp": "قم بالتسجيل",
   "editProfile": "تعديل الملف الشخصي",
   "updateProfilePic": "قم بتحديث صورة ملفك الشخصي",
@@ -19,8 +14,13 @@
   "confirmPass": "قم بتأكيد كلمة المرور",
   "confirmPassHint": "أكد رقمك السري",
   "termConToast": "البنود و الظروف",
-  "IAgreeWith": "أنا أتفق مع",
   "back": "الى الخلف",
   "save": "حفظ",
-  "exsistingUser": "مستخدم موجود؟"
+  "exsistingUser": "مستخدم موجود؟",
+  "iAgreeWith": "أنا أتفق مع",
+  "password": "كلمة المرور",
+  "dontHaveAccount": "ليس لديك حساب؟ قم بالتسجيل",
+  "passwordHint": "من فضلك أدخل رقمك السري",
+  "userEmail": "البريد الالكتروني للمستخدم",
+  "forgotPass": "هل نسيت كلمة السر؟"
 }

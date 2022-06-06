@@ -1,12 +1,7 @@
 {
   "login": "Connexion",
   "email": "Courriel",
-  "user_email": "Courriel de l'utilisateur",
-  "Password": "Mot de passe",
-  "please_enter_pass": "s'il vous plait entrez votre mot de passe",
-  "forgot_password": "Mot de passe oublié?",
   "here": "ici",
-  "dont_have_account": "Vous n'avez pas de compte ? S'inscrire",
   "signUp": "Inscrivez-vous",
   "editProfile": "Editer le profil",
   "updateProfilePic": "Mettez à jour votre photo de profil",
@@ -19,8 +14,13 @@
   "confirmPass": "Confirmer le mot de passe",
   "confirmPassHint": "Confirmer votre mot de passe",
   "termConToast": "termes et conditions",
-  "IAgreeWith": "je suis d'accord avec",
   "back": "RETOUR",
   "save": "ENREGISTRER",
-  "exsistingUser": "Utilisateur existant?"
+  "exsistingUser": "Utilisateur existant?",
+  "iAgreeWith": "je suis d'accord avec",
+  "password": "Mot de passe",
+  "dontHaveAccount": "Vous n'avez pas de compte ? S'inscrire",
+  "passwordHint": "s'il vous plait entrez votre mot de passe",
+  "userEmail": "Courriel de l'utilisateur",
+  "forgotPass": "Mot de passe oublié?"
 }
